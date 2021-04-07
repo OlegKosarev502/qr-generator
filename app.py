@@ -1,25 +1,43 @@
-import os
-import eel
-import qrcode
+from tkinter import *
+import logic
 
-img_path = 'C:/Dev/python-eel/web/img/result.png'
+logic.clear_folder()
 
-def clear_folder():
-    if (os.path.exists(img_path)):
-        os.remove(img_path)
+root = Tk()
+root.title("QR GENERATOR")
+root.geometry("480x400")
 
-def close_callback(*args):
-    clear_folder()
+save_state = DISABLED
+default_url = StringVar(root, "https://www.google.com/")
 
-# Set web files folder.
-eel.init('web')
+def generate():
+    url = entry.get()
+    logic.generate_qr(url)
 
-# Expose this function to JavaScript.
-@eel.expose
-def generate_qr(url):
-    clear_folder()
-    img = qrcode.make(url)
-    img.save(img_path)
+header = Label(root, text="PASS URL")
+entry = Entry(root, textvariable=default_url, width=32)
 
-# Run the application.
-eel.start('index.html', size=(400, 480), close_callback=close_callback)
+generate_button = Button(
+    root,
+    text="GENERATE",
+    padx=12,
+    command=generate
+)
+
+img_mock = Label(root, text="VALUE-2") # QR IMG
+
+save_button = Button(
+    root,
+    text="SAVE",
+    state=save_state,
+    padx=12,
+    command=logic.save_img
+)
+
+header.grid(row="0", column="0")
+entry.grid(row="1", column="0")
+generate_button.grid(row="1", column="1")
+img_mock.grid(row="2", column="0")
+save_button.grid(row="3", column="0")
+
+root.mainloop()
